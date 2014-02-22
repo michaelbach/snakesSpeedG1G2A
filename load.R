@@ -4,18 +4,20 @@
 # 2013-11-21 begun
 #
 
-mdbToolPath = file.path(Sys.getenv("HOME"), "Documents", "Bach", "myProgs", "R","mdbTools")
-source(file.path(mdbToolPath, "setThemeBach01.R"));  setThemeBach01(base_size=18)
-#source(file.path(mdbToolPath, "pValueString.R"))
-#source(file.path(mdbToolPath, "multiplot.R"))
-#source(file.path(mdbToolPath, "rstr.R"))
+if (grep("bach$", Sys.getenv("HOME"))) {
+  mdbToolPath = file.path(Sys.getenv("HOME"), "Documents", "Bach", "myProgs", "R","mdbTools")
+  source(file.path(mdbToolPath, "setThemeBach01.R"));  setThemeBach01(base_size=18)
+  #source(file.path(mdbToolPath, "pValueString.R"))
+  #source(file.path(mdbToolPath, "multiplot.R"))
+  #source(file.path(mdbToolPath, "rstr.R"))
+  setwd(file.path(Sys.getenv("HOME"), "Documents", "Bach", "Projekte", "FORSCHUNG", "Snake Illusion (LG)", "analysis"))
+}
 
-setwd(file.path(Sys.getenv("HOME"), "Documents", "Bach", "Projekte", "FORSCHUNG", "Snake Illusion (LG)", "analysis"))
-p = file.path("../", "data", "Messungen_2.xlsx")
+p = file.path("../", "data", "Messungen_2.xlsx") # data in folder "data" next to analysis folder
 if (file.exists(p)) {
   require(gdata);  d <- read.xls(xls = p, verbose=T, sheet=1)
 } else {
-  p = "Messungen.ods"
+  p = "Messungen_2.ods"
   if (file.exists(p)) {
     require(ROpenOffice);  d = read.ods(file = p);   # omegahat 
   } else {
@@ -23,13 +25,12 @@ if (file.exists(p)) {
   }
 }
 names(d)
-#colnames(d)[names(d) == "v_end"] = "velocity"
-d$g1=d$grey11*100;  d$g2=d$grey21*100
+d$g1=d$grey11*100;  d$g2=d$grey21*100 # g1 & g2 in %
 d$direction = trim(as.character(d$direction)) # make sure only "l" and "r" exist without white space
-stopifnot(identical(sort(unique(d$direction)), c("l", "r")))
+stopifnot(identical(sort(unique(d$direction)), c("l", "r"))) # errors?
 
-d$velocity <- ifelse(d$direction == "l", d$v_end, -d$v_end)
-if (p == "Messungen.xlsx") {
+d$velocity <- ifelse(d$direction == "l", d$v_end, -d$v_end) # perceived velocity with right sign
+if (p == "Messungen.xlsx") { # some corrections for initial experiments
   d$g1 = ifelse(d$g1==12.5, 13, d$g1)
   d$g1 = ifelse(d$g1==62.5, 63, d$g1)
   d$g2 = ifelse(d$g2==37.5, 37, d$g2)
@@ -59,7 +60,8 @@ setThemeBach01(base_size=20)
 ggplot(data=dc, aes(x=g1, y=g2, fill=velocity)) +
   geom_tile(width=sze, height=sze) +
   coord_cartesian(xlim=c(-dx, 100+dx), ylim=c(-dy, 100+dy)) + 
-  scale_fill_gradient2(name="Velocity [°/s]  ", low="green", mid = "grey", high="red", limits=c(-mmax, mmax), breaks=c(-1, 0, 1)) +
+  scale_fill_gradient2(name="Vel. [°/s]  ", low="green", mid = "grey", high="red", limits=c(-mmax, mmax), breaks=c(-1, 0, 1)) +
   theme(aspect.ratio = 1/1) +
-  labs(x="g1 [%]", y="g2 [%]") +
+  labs(x="Grey level 1 [%]", y="Grey level 2 [%]", 
+       title=paste0("Subjects ", paste(unique(d$id), collapse=", "))) +
   theme(legend.justification=c(1, 0), legend.position=c(1, 0))
