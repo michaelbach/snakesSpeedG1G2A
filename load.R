@@ -6,9 +6,9 @@
 
 mdbToolPath = file.path(Sys.getenv("HOME"), "Documents", "Bach", "myProgs", "R","mdbTools")
 source(file.path(mdbToolPath, "setThemeBach01.R"));  setThemeBach01(base_size=18)
-source(file.path(mdbToolPath, "pValueString.R"))
-source(file.path(mdbToolPath, "multiplot.R"))
-source(file.path(mdbToolPath, "rstr.R"))
+#source(file.path(mdbToolPath, "pValueString.R"))
+#source(file.path(mdbToolPath, "multiplot.R"))
+#source(file.path(mdbToolPath, "rstr.R"))
 
 setwd(file.path(Sys.getenv("HOME"), "Documents", "Bach", "Projekte", "FORSCHUNG", "Snake Illusion (LG)", "analysis"))
 p = file.path("../", "data", "Messungen_2.xlsx")
@@ -26,7 +26,7 @@ names(d)
 #colnames(d)[names(d) == "v_end"] = "velocity"
 d$g1=d$grey11*100;  d$g2=d$grey21*100
 d$direction = trim(as.character(d$direction)) # make sure only "l" and "r" exist without white space
-if (!identical(sort(unique(d$direction)), c("l", "r"))) stop("“d$direction” has wrong characters")
+stopifnot(identical(sort(unique(d$direction)), c("l", "r")))
 
 d$velocity <- ifelse(d$direction == "l", d$v_end, -d$v_end)
 if (p == "Messungen.xlsx") {
