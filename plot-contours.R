@@ -19,6 +19,7 @@ interpolationResult = interp(x=dc$g1, y=dc$g2, z=dc$velocity, xo=seq(0, 100, len
 #filled.contour(x=seq(0, 100, length.out = nPoints), y=seq(0, 100, length.out=nPoints), z=zMatrix)
 
 zm = melt(interpolationResult$z);  names(zm) <- c("g1", "g2", "velocity")
+zm =na.omit(zm)
 require(ggplot2)
 ggplot(data=zm, aes(x=g1, y=g2, z=velocity)) +
   geom_tile(aes(fill=velocity), colour=NA) + 
@@ -28,3 +29,4 @@ ggplot(data=zm, aes(x=g1, y=g2, z=velocity)) +
   theme(aspect.ratio = 1/1) +
   coord_cartesian(xlim=c(0, 100), ylim=c(0, 100)) +
   labs(title=paste0("Subjects ", paste(unique(d$id), collapse=", ")))
+
